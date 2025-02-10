@@ -1,0 +1,18 @@
+package com.xulei.mianshikun.mapper;
+
+import com.xulei.mianshikun.model.entity.Question;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+
+/**
+* @author xl
+* @description 针对表【question(题目)】的数据库操作Mapper
+* @createDate 2025-02-10 21:50:05
+* @Entity com.xulei.mianshikun.model.entity.Question
+*/
+public interface QuestionMapper extends BaseMapper<Question> {
+
+}
+
+
+
+
