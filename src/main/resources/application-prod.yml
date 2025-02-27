@@ -4,8 +4,10 @@
 server:
   port: 8101
 spring:
+  main:
+      #    解决升级Spring Boot2.6后,因依赖循环引用导致启动时报错的问题
+      allow-circular-references: true
   # 数据库配置
-  # todo 需替换配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/mianshikun

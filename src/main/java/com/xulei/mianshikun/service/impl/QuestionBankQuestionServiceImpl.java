@@ -9,11 +9,15 @@ import com.xulei.mianshikun.constant.CommonConstant;
 import com.xulei.mianshikun.exception.ThrowUtils;
 import com.xulei.mianshikun.mapper.QuestionBankQuestionMapper;
 import com.xulei.mianshikun.model.dto.questionBankQuestion.QuestionBankQuestionQueryRequest;
+import com.xulei.mianshikun.model.entity.Question;
+import com.xulei.mianshikun.model.entity.QuestionBank;
 import com.xulei.mianshikun.model.entity.QuestionBankQuestion;
 import com.xulei.mianshikun.model.entity.User;
 import com.xulei.mianshikun.model.vo.QuestionBankQuestionVO;
 import com.xulei.mianshikun.model.vo.UserVO;
 import com.xulei.mianshikun.service.QuestionBankQuestionService;
+import com.xulei.mianshikun.service.QuestionBankService;
+import com.xulei.mianshikun.service.QuestionService;
 import com.xulei.mianshikun.service.UserService;
 import com.xulei.mianshikun.utils.SqlUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +44,12 @@ public class QuestionBankQuestionServiceImpl extends ServiceImpl<QuestionBankQue
     @Resource
     private UserService userService;
 
+    @Resource
+    private QuestionService questionService;
+
+    @Resource
+    private QuestionBankService questionBankService;
+
     /**
      * 校验数据
      *
@@ -49,6 +59,17 @@ public class QuestionBankQuestionServiceImpl extends ServiceImpl<QuestionBankQue
     @Override
     public void validQuestionBankQuestion(QuestionBankQuestion questionBankQuestion, boolean add) {
         ThrowUtils.throwIf(questionBankQuestion == null, ErrorCode.PARAMS_ERROR);
+        // 题目和题库必须存在
+        Long questionId = questionBankQuestion.getQuestionId();
+        if (questionId != null) {
+            Question question = questionService.getById(questionId);
+            ThrowUtils.throwIf(question == null, ErrorCode.PARAMS_ERROR,"题目不存在");
+        }
+        Long questionBankId = questionBankQuestion.getQuestionBankId();
+        if (questionBankId != null) {
+            QuestionBank questionBank = questionBankService.getById(questionBankId);
+            ThrowUtils.throwIf(questionBank == null, ErrorCode.PARAMS_ERROR,"题库不存在");
+        }
         // 不需要校验
 //        // todo 从对象中取值
 //        String title = questionBankQuestion.getTitle();
@@ -84,6 +105,7 @@ public class QuestionBankQuestionServiceImpl extends ServiceImpl<QuestionBankQue
         Long questionBankId = questionBankQuestionQueryRequest.getQuestionBankId();
         Long questionId = questionBankQuestionQueryRequest.getQuestionId();
         Long userId = questionBankQuestionQueryRequest.getUserId();
+
         // todo 补充需要的查询条件
         // 精确查询
         queryWrapper.ne(ObjectUtils.isNotEmpty(notId), "id", notId);
